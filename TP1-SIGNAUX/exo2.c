@@ -10,11 +10,6 @@ void handler(int sig)
 }
 int main(int argc, char **argv)
 {
-    struct sigaction sa;
-    sa.sa_handler = handler;
-    sa.sa_flags = 0;
-    sigemptyset(&sa.sa_mask);
-    sigaction(SIGINT, &sa, NULL);
 
     pid_t pid;
     switch (pid = fork())
@@ -23,6 +18,11 @@ int main(int argc, char **argv)
         perror("echec du fork");
         exit(2);
     case 0:
+        struct sigaction sa;
+        sa.sa_handler = handler;
+        sa.sa_flags = 0;
+        sigemptyset(&sa.sa_mask);
+        sigaction(SIGINT, &sa, NULL);
         while (1)
         {
             time_t t = time(NULL);
@@ -32,8 +32,14 @@ int main(int argc, char **argv)
         exit(0);
         // default:
     }
+    struct sigaction sapere;
+    sapere.sa_handler = SIG_IGN;
+    sapere.sa_flags = 0;
+    sigemptyset(&sapere.sa_mask);
+    sigaction(SIGINT, &sapere, NULL);
     printf("Je suis le pere <<%d>>\n", getpid());
     int status;
+
     int x = 0;
     do
     {
